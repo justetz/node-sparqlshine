@@ -7,7 +7,7 @@ A simple SPARQL HTTP Client library for Node.js. The spiritual successor to
 
 ### Install
 
-    npm install sparql
+    npm install sparqlshine
 
 ### Use
 
