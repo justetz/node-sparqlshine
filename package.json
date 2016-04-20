@@ -1,7 +1,7 @@
 {
   "name": "sparqlshine",
   "description": "A spiritual successor to @aldonline's sparql client",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "maintainers": [
     "Justin Etzine <justetz@gmail.com>"
   ],
