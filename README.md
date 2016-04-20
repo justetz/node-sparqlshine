@@ -20,57 +20,73 @@ client.query('select * where { ?s ?p ?o } limit 100', function(err, res) {
   return console.log(res);
 });
 ```
-sparql = require 'sparql'
-client = new sparql.Client 'http://dbpedia.org/sparql'
-client.query 'select * where { ?s ?p ?o } limit 100', (err, res) ->
-console.log res
 
-The result of calling the query() function will be a raw object conforming to the SPARQL-JSON[1] results format.
+The result of calling the `query()` function will be a raw object conforming to the `SPARQL-JSON[1]` results format.
 
 ## Core API
 
-### query
+### `query`
 
 Low level function. Returns the complete [SPARQL-JSON][sparql-json] results object.
 
-    client.query 'select * where {?s ?p ?o} limit 10', (err, res) ->
-      console.log row.s for row in res.results.bindings
+```javascript
+client.query('select * where {?s ?p ?o} limit 10', function(err, res) {
+  var ref = res.results.bindings;
+  for (var i = 0, len = ref.length; i < len; i++) {
+    console.log(ref[i].s);
+  }
+});
+```
 
-Convenience Query Methods
-------------------------------
+## Convenience Query Methods
 
-### rows
+### `rows`
 
 Convenience method to get to the rows directly. Builds on top of sparql.query, like most of the
 other query methods.
 
-    client.rows 'select * where {?s ?p ?o} limit 10', (err, res) ->
-      console.log row.s for row in res
+```javascript
+client.rows('select * where {?s ?p ?o} limit 10', function(err, res) {
+  for (var i = 0, len = res.length; i < len; i++) {
+    console.log(res[i].s);
+  }
+});
+```
 
-### row
+### `row`
 
 Convenience method that only returns the first row in the result set
 
-    client.row 'select * where {?s ?p ?o} limit 10', (err, res) ->
-      console.log res.s
+```javascript
+client.row('select * where {?s ?p ?o} limit 10', function(err, res) {
+  console.log(res.s);
+});
+```
 
-### col
+### `col`
 
 Convenience method that returns an array of with the first value of each row
 
-    client.col 'select distinct ?name where {?s foaf:name ?name} limit 10', (err, res) ->
-      console.log( rdf_value.value ) for rdf_value in res
+```javascript
+client.col('select distinct ?name where {?s foaf:name ?name} limit 10', function(err, res) {
+  for (var i = 0, len = res.length; i < len; i++) {
+    console.log(res[i].value);
+  }
+});
+```
 
 What's with the rdf_value.value part?
 Read the [SPARQL-JSON][sparql-json] results format specification page.
 
-### cell
+### `cell`
 
 Convenience method that returns only the first binding of the first row or NULL
 
-    client.col 'select ?name where {?s foaf:name ?name} limit 1', (err, res) ->
-      console.log res
-
+```javascript
+client.col('select ?name where {?s foaf:name ?name} limit 1', function(err, res) {
+  console.log(res);
+});
+```
 
 Convenience Update Methods
 ------------------------------
@@ -80,7 +96,7 @@ I am providing a small number of such methods, as I don't want this library to g
 
 Writing SPARQL by hand is highly encouraged.
 
-### set
+### `set`
 
 Provide an abstraction atop a simple 'entity oriented' operation that is not so simple when you are working with SPARQL.
 
@@ -90,8 +106,11 @@ Imagine you want to do something like this, conceptually speaking:
 
 You can get that with one simple call to the API
 
-    client.set '<urn:test:graph>', '<urn:test:aldo>', '<urn:test:name>', '"Aldo"', no, (err, res) ->
-      console.log 'Aldo is now named Aldo, hooray!'
+```javascript
+client.set('<urn:test:graph>', '<urn:test:aldo>', '<urn:test:name>', '"Aldo"', false, function(err, res) {
+  console.log('Aldo is now named Aldo, hooray!');
+});
+```
 
 Not so simple? Well, compare that to the SPARQL Update statement that gets generated under the covers:
 
@@ -104,8 +123,11 @@ Notice that, if `<urn:test:aldo>` had a previous `<urn:test:name>`, it will be r
 
 You can also delete a value by setting it to null ( effectively removing one or more triples )
 
-    client.set '<urn:test:graph>', '<urn:test:aldo>', '<urn:test:name>', null, no, (err, res) ->
-      console.log 'Aldo went back to anonimity'
+```javascript
+client.set('<urn:test:graph>', '<urn:test:aldo>', '<urn:test:name>', null, false, function(err, res) {
+  console.log('Aldo went back to anonimity');
+});
+```
 
 In this case, the generated SPARQL is:
 
@@ -126,13 +148,17 @@ Let's group some attributes of an user
 		'<urn:test:password>' : '123'
 		'<urn:test:name>' : 'Herman'
 
-And we invoke mset
+And we invoke `mset`
 
-	client.mset  '<urn:test:graph>', <urn:test:haj>', attributes, (err, res) ->
-		if err?
-			console.log 'Success'
-		else
-			console.log 'Error: ' + err
+```javascript
+client.mset('<urn:test:graph>', '<urn:test:haj>', attributes, function(err, res) {
+  if (err != null) {
+    console.log('Success');
+  } else {
+    console.log('Error: ' + err);
+  }
+});
+```
 
 The SPARQL query generated is:
 
@@ -146,20 +172,6 @@ Tests
 
 ### Test Dependencies
 
-You must have [OpenLink Virtuoso](http://virtuoso.openlinksw.com/dataspace/dav/wiki/Main/) >= 6.1.2 installed and `virtuoso`, `isql` in your path.
-
-Also, maybe you have to set Virtuoso to allow INSERT and DELETE to be done via sparql:
-
-	$ isql
-	SQL> grant execute on DB.DBA.SPARQL_MODIFY_BY_DICT_CONTENTS to "SPARQL";
-
-
-You must also have expresso
-    npm install expresso
-
-### Running the Tests
-
-(Coming Soon)
-
+Mocha is used for testing. To run the tests, find the root directory of the project and run `mocha test/sparql.test.js`.
 
 [sparql-json]: http://www.w3.org/TR/rdf-sparql-json-res/
