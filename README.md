@@ -1,12 +1,9 @@
-Simple SPARQL HTTP Client library for Node.js
-=============================================
+# sparqlshine
 
-I WROTE THIS A LONG TIME AGO.
-I RECOMMEND YOU USE PLAIN HTTP + JSON TO DEAL WITH SPARQL ENDPOINTS.
+A simple SPARQL HTTP Client library for Node.js. The spiritual successor to
+[Aldo Bucchi](https://github.com/aldonline)'s [node-sparql](https://github.com/aldonline/node-sparql)
 
-
-Getting Started
---------------------
+## Getting Started
 
 ### Install
 
@@ -14,15 +11,23 @@ Getting Started
 
 ### Use
 
-    sparql = require 'sparql'
-    client = new sparql.Client 'http://dbpedia.org/sparql'
-    client.query 'select * where { ?s ?p ?o } limit 100', (err, res) ->
-      console.log res
+```javascript
+var sparql = require('sparqlshine');
 
-The result of calling the query() function will be a raw object conforming to the SPARQL-JSON[1] results format. 
+var client = new sparql.Client('http://dbpedia.org/sparql');
 
-Core API
---------------------
+client.query('select * where { ?s ?p ?o } limit 100', function(err, res) {
+  return console.log(res);
+});
+```
+sparql = require 'sparql'
+client = new sparql.Client 'http://dbpedia.org/sparql'
+client.query 'select * where { ?s ?p ?o } limit 100', (err, res) ->
+console.log res
+
+The result of calling the query() function will be a raw object conforming to the SPARQL-JSON[1] results format.
+
+## Core API
 
 ### query
 
@@ -86,13 +91,13 @@ Imagine you want to do something like this, conceptually speaking:
 You can get that with one simple call to the API
 
     client.set '<urn:test:graph>', '<urn:test:aldo>', '<urn:test:name>', '"Aldo"', no, (err, res) ->
-      console.log 'Aldo is now named Aldo, hooray!' 
+      console.log 'Aldo is now named Aldo, hooray!'
 
 Not so simple? Well, compare that to the SPARQL Update statement that gets generated under the covers:
 
-    modify <urn:test:graph> 
-      delete { <urn:test:aldo> <urn:test:name> ?x } 
-      insert { <urn:test:aldo> <urn:test:name> "Aldo" } 
+    modify <urn:test:graph>
+      delete { <urn:test:aldo> <urn:test:name> ?x }
+      insert { <urn:test:aldo> <urn:test:name> "Aldo" }
       where { optional{ <urn:test:aldo> <urn:test:name> ?x } }
 
 Notice that, if `<urn:test:aldo>` had a previous `<urn:test:name>`, it will be replaced. If it doesn't, then a new triple will be inserted.
@@ -112,17 +117,17 @@ The 5th parameter is a boolean flag indicating whether the triple patterns shoul
 
 ### mset
 
-One Subject, several pairs Predicate-Object 
+One Subject, several pairs Predicate-Object
 
 Let's group some attributes of an user
 
-	attributes = 
+	attributes =
 		'<urn:test:username>' : 'haj'
 		'<urn:test:password>' : '123'
 		'<urn:test:name>' : 'Herman'
 
 And we invoke mset
-	
+
 	client.mset  '<urn:test:graph>', <urn:test:haj>', attributes, (err, res) ->
 		if err?
 			console.log 'Success'
@@ -158,5 +163,3 @@ You must also have expresso
 
 
 [sparql-json]: http://www.w3.org/TR/rdf-sparql-json-res/
-
-
