@@ -167,11 +167,10 @@ The SPARQL query generated is:
 							<urn:test:password>		'123';
 							<urn:test:name>			'Herman'. }
 
-Tests
---------------------
+# Tests
 
-### Test Dependencies
+Mocha is used for testing. Install Mocha by running `npm install -g mocha`.
 
-Mocha is used for testing. To run the tests, find the root directory of the project and run `mocha test/sparql.test.js`.
+To run the tests, find the root directory of the project and run `mocha test/sparql.test.js`.
 
 [sparql-json]: http://www.w3.org/TR/rdf-sparql-json-res/
